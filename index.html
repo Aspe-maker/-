@@ -1,1 +1,50 @@
 
+const player = document.getElementById("player");
+const obstacle = document.getElementById("obstacle");
+
+let isJumping = false;
+
+function jump() {
+    if (isJumping) return;
+    isJumping = true;
+    let position = 0;
+    const upInterval = setInterval(() => {
+        if (position >= 100) {
+            clearInterval(upInterval);
+            const downInterval = setInterval(() => {
+                if (position <= 0) {
+                    clearInterval(downInterval);
+                    isJumping = false;
+                } else {
+                    position -= 5;
+                    player.style.bottom = position + "px";
+                }
+            }, 20);
+        } else {
+            position += 5;
+            player.style.bottom = position + "px";
+        }
+    }, 20);
+}
+
+document.addEventListener("keydown", (event) => {
+    if (event.key === " " || event.key === "ArrowUp") {
+        jump();
+    }
+});
+
+function checkCollision() {
+    const playerRect = player.getBoundingClientRect();
+    const obstacleRect = obstacle.getBoundingClientRect();
+    if (
+        playerRect.right > obstacleRect.left &&
+        playerRect.left < obstacleRect.right &&
+        playerRect.bottom > obstacleRect.top &&
+        playerRect.top < obstacleRect.bottom
+    ) {
+        alert("Game Over!");
+        location.reload();
+    }
+}
+
+setInterval(checkCollision, 10);
